@@ -7,12 +7,12 @@
     },
 
     "train": {
-        "train_image_folder":   "/media/student/voc2012/VOCdevkit/VOC2012/JPEGImages/",
-        "train_annot_folder":   "/media/student/voc2012/VOCdevkit/VOC2012/Annotations/",   
+        "train_image_folder":   "/media/student/cuda/darknet_vocdata/VOCdevkit/VOC2007/JPEGImages",
+        "train_annot_folder":   "/media/student/cuda/darknet_vocdata/VOCdevkit/VOC2007/Annotations/",   
         "cache_name":           "voc_train.pkl",  
           
         "train_times":          1,
-        "batch_size":           2,
+        "batch_size":           8,
         "learning_rate":        1e-5,
         "nb_epochs":            100,
         "warmup_epochs":        3,
@@ -26,13 +26,13 @@
         "class_scale":          1,
 
         "tensorboard_dir":      "log_voc",
-        "saved_weights_name":   "voc2012_newtrain.h5",
+        "saved_weights_name":   "voc.h5",
         "debug":                true
     },
 
     "valid": {
-        "valid_image_folder":   "",
-        "valid_annot_folder":   "",
+        "valid_image_folder":   "/home/experiencor/data/pascal/valid/images/",
+        "valid_annot_folder":   "/home/experiencor/data/pascal/valid/annots/",
         "cache_name":           "voc_valid.pkl",
 
         "valid_times":          1

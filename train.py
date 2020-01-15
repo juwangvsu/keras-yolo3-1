@@ -1,4 +1,11 @@
 #! /usr/bin/env python
+import tensorflow as tf
+#from tensorflow.compat.v1 import ConfigProto
+#from tensorflow.compat.v1 import InteractiveSession
+
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.InteractiveSession(config=config)
 
 import argparse
 import os
@@ -27,7 +34,8 @@ def create_training_instances(
 ):
     # parse annotations of the training set
     train_ints, train_labels = parse_voc_annotation(train_annot_folder, train_image_folder, train_cache, labels)
-
+    print('xxx', train_labels)
+    print('train_cache', train_cache)
     # parse annotations of the validation set, if any, otherwise split the training set
     if os.path.exists(valid_annot_folder):
         valid_ints, valid_labels = parse_voc_annotation(valid_annot_folder, valid_image_folder, valid_cache, labels)
