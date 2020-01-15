@@ -22,6 +22,11 @@ from utils.multi_gpu_model import multi_gpu_model
 import tensorflow as tf
 import keras
 from keras.models import load_model
+def create_validlist(valid_ints):
+    fp=open('valid_list.txt','w')
+    for item in valid_ints:
+       fp.write(item['filename'].split('/')[7]+'\n')
+    fp.close()
 
 def create_training_instances(
     train_annot_folder,
@@ -32,9 +37,12 @@ def create_training_instances(
     valid_cache,
     labels,
 ):
+    print(train_annot_folder, train_image_folder)
     # parse annotations of the training set
     train_ints, train_labels = parse_voc_annotation(train_annot_folder, train_image_folder, train_cache, labels)
+    print(train_ints[1]['filename'].split('/'))
     print('xxx', train_labels)
+    #exit(0)
     print('train_cache', train_cache)
     # parse annotations of the validation set, if any, otherwise split the training set
     if os.path.exists(valid_annot_folder):
@@ -48,8 +56,9 @@ def create_training_instances(
         np.random.seed()
 
         valid_ints = train_ints[train_valid_split:]
+        create_validlist(valid_ints)
         train_ints = train_ints[:train_valid_split]
-
+    exit(0)
     # compare the seen labels with the given labels in config.json
     if len(labels) > 0:
         overlap_labels = set(labels).intersection(set(train_labels.keys()))
