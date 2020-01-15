@@ -18,6 +18,10 @@ results:
 
 perf:
 	msi: batch=2
+	tensorboard, loss drop by 25 in 2k, at 70k stall at 10
+
+	continue train at homepc.
+
 ----------test training with voc2007 -------------------
 train use config_voc_local.json
 if folder/path/filename error, need to delete cache file for next run
