@@ -1,4 +1,6 @@
 {
+    "_comment": "comment text goes here... small tst set: VOC2012/tst_image/ VOC2012/tst_ann/, full voc2012 train folder: VOC2012/JPEGImages, Annotations",
+
     "model" : {
         "min_input_size":       224,
         "max_input_size":       480,

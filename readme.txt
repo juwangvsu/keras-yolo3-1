@@ -18,7 +18,14 @@ how does the generator work? how many time it is called per epochs?
 	in keras-yolo-another, we can see the progress of image processed,
 	why not shown here?
 
-		
+checkpoint callback:
+	multiple customized checkpoint callbacks ok, called in sequence.
+	[[checkpoint2, checkpoint2, ] will write to a new .h5, and
+		then move the symbolic link to point to the current one.
+	CustomModelCheckpoint2: move the link log_voc/voc2012_newtrain.h5 to the newone.		
+	CustomModelCheckpoint: save new weight to voc2012_newtrain.h5, notice that voc2012_newtrain.h5 is a link to log_voc/voc2012_newtrain.h5
+	ModelCheckpoiint: save a new .h5 every some epoch
+
 ---------1/14-15/2020 -test training with voc2012 as README. -------------------
 http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 /media/student/voc2012
@@ -30,7 +37,7 @@ to start a retrain clean, make sure delete voc_train.pkl, which might contain ca
 train cmd:
 	python3 train.py -c zoo/config_voc.json
 		make sure rm voc_train.pkl
-		if change train.py code checkpoint
+		if change dataset , train.py code checkpoint
 results:
 	log_voc2012
 	voc2012_newtrain.h5

@@ -17,7 +17,7 @@ from generator import BatchGenerator
 from utils.utils import normalize, evaluate, makedirs
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from keras.optimizers import Adam
-from callbacks import CustomModelCheckpoint, CustomTensorBoard
+from callbacks import CustomModelCheckpoint, CustomModelCheckpoint2, CustomTensorBoard
 from utils.multi_gpu_model import multi_gpu_model
 import tensorflow as tf
 import keras
@@ -98,7 +98,16 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
         mode            = 'min', 
         period          = 1
     )
-    checkpoint2 = ModelCheckpoint('log_voc/ep{epoch:03d}-loss{loss:.3f}.h5', monitor='loss', save_weights_only=True, save_best_only=True, period=5)
+    checkpoint2 = CustomModelCheckpoint2(
+        model_to_save   = model_to_save,
+        filepath        = saved_weights_name,# + '{epoch:02d}.h5', 
+        monitor         = 'loss', 
+        verbose         = 1, 
+        save_best_only  = True, 
+        mode            = 'min', 
+        period          = 1
+    )
+    checkpoint3 = ModelCheckpoint('log_voc/ep{epoch:03d}-loss{loss:.3f}.h5', monitor='loss', save_weights_only=True, save_best_only=True, period=1)
 	#checkpoint2 not working yet for some reason... 1/15/2020
 
     reduce_on_plateau = ReduceLROnPlateau(
@@ -116,7 +125,7 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
         write_graph            = True,
         write_images           = True,
     )    
-    return [checkpoint2, tensorboard]
+    return [checkpoint3, checkpoint2, tensorboard]
     #return [early_stop, checkpoint, reduce_on_plateau, tensorboard]
 
 def create_model(

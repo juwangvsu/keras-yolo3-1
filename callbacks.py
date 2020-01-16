@@ -1,7 +1,7 @@
 from keras.callbacks import TensorBoard, ModelCheckpoint
 import tensorflow as tf
 import numpy as np
-
+import os
 class CustomTensorBoard(TensorBoard):
     """ to log the loss after each batch
     """    
@@ -33,6 +33,7 @@ class CustomModelCheckpoint(ModelCheckpoint):
         self.model_to_save = model_to_save
 
     def on_epoch_end(self, epoch, logs=None):
+        print('CustomModelCheckpoint')
         logs = logs or {}
         self.epochs_since_last_save += 1
         if self.epochs_since_last_save >= self.period:
@@ -68,3 +69,35 @@ class CustomModelCheckpoint(ModelCheckpoint):
                     self.model_to_save.save(filepath, overwrite=True)
 
         super(CustomModelCheckpoint, self).on_batch_end(epoch, logs)
+
+class CustomModelCheckpoint2(ModelCheckpoint):
+    """ check if there is a new .h5, if so ln filepath to that file 
+    """
+    def __init__(self, model_to_save, **kwargs):
+        super(CustomModelCheckpoint2, self).__init__(**kwargs)
+        self.model_to_save = model_to_save
+
+    def on_epoch_end(self, epoch, logs=None):
+        print('CustomModelCheckpoint2')
+        logs = logs or {}
+        self.epochs_since_last_save += 1
+        if self.epochs_since_last_save >= self.period:
+            self.epochs_since_last_save = 0
+            filepath = self.filepath.format(epoch=epoch + 1, **logs)
+        h5file_mtime=[]
+        h5list = [x for x in os.listdir("log_voc") if x.endswith(".h5")]
+        for h5file in h5list:
+           h5file_mtime.append(os.stat('log_voc/'+h5file).st_mtime)
+        max_value = max(h5file_mtime)
+        max_index = h5file_mtime.index(max_value)
+        curr_h5_mtime=os.stat('log_voc/voc2012_newtrain.h5').st_mtime
+
+        print('calling super', filepath)
+        print('log_voc/voc2012_newtrain.h5 mtime', curr_h5_mtime)
+        print('h5 files', h5list, h5file_mtime, 'newest index', max_index)
+        if curr_h5_mtime < max_value:
+           print('ln -s ', 'log_voc/voc2012_newtrain.h5', 'log_voc/'+h5list[max_index])
+           os.remove('log_voc/voc2012_newtrain.h5')
+           os.symlink(h5list[max_index], 'log_voc/voc2012_newtrain.h5') # symlink(src, dest)
+        super(CustomModelCheckpoint2, self).on_batch_end(epoch, logs)
+        print('calling super done')
