@@ -3,7 +3,7 @@ import numpy as np
 import os
 from .bbox import BoundBox, bbox_iou
 from scipy.special import expit
-
+import time
 def _sigmoid(x):
     return expit(x)
 
@@ -40,8 +40,10 @@ def evaluate(model,
     # gather all detections and annotations
     all_detections     = [[None for i in range(generator.num_classes())] for j in range(generator.size())]
     all_annotations    = [[None for i in range(generator.num_classes())] for j in range(generator.size())]
-
+    print(time.time())
     for i in range(generator.size()):
+        print('time ', time.time())
+        print('evaluate image# ', i)
         raw_image = [generator.load_image(i)]
 
         # make the boxes and the labels

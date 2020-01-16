@@ -15,7 +15,7 @@ from voc import parse_voc_annotation
 from yolo import create_yolov3_model, dummy_loss
 from generator import BatchGenerator
 from utils.utils import normalize, evaluate, makedirs
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from keras.optimizers import Adam
 from callbacks import CustomModelCheckpoint, CustomTensorBoard
 from utils.multi_gpu_model import multi_gpu_model
@@ -58,7 +58,7 @@ def create_training_instances(
         valid_ints = train_ints[train_valid_split:]
         create_validlist(valid_ints)
         train_ints = train_ints[:train_valid_split]
-    exit(0)
+    #exit(0)
     # compare the seen labels with the given labels in config.json
     if len(labels) > 0:
         overlap_labels = set(labels).intersection(set(train_labels.keys()))
@@ -98,6 +98,9 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
         mode            = 'min', 
         period          = 1
     )
+    checkpoint2 = ModelCheckpoint('log_voc/ep{epoch:03d}-loss{loss:.3f}.h5', monitor='loss', save_weights_only=True, save_best_only=True, period=5)
+	#checkpoint2 not working yet for some reason... 1/15/2020
+
     reduce_on_plateau = ReduceLROnPlateau(
         monitor  = 'loss',
         factor   = 0.1,
@@ -113,7 +116,8 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
         write_graph            = True,
         write_images           = True,
     )    
-    return [early_stop, checkpoint, reduce_on_plateau, tensorboard]
+    return [checkpoint2, tensorboard]
+    #return [early_stop, checkpoint, reduce_on_plateau, tensorboard]
 
 def create_model(
     nb_class, 
@@ -165,7 +169,7 @@ def create_model(
 
     # load the pretrained weight if exists, otherwise load the backend weight only
     if os.path.exists(saved_weights_name): 
-        print("\nLoading pretrained weights.\n")
+        print("\nLoading pretrained weights.\n\t\t\t", saved_weights_name)
         template_model.load_weights(saved_weights_name)
     else:
         template_model.load_weights("backend.h5", by_name=True)       
@@ -268,9 +272,10 @@ def _main_(args):
         generator        = train_generator, 
         steps_per_epoch  = len(train_generator) * config['train']['train_times'], 
         epochs           = config['train']['nb_epochs'] + config['train']['warmup_epochs'], 
-        verbose          = 2 if config['train']['debug'] else 1,
+        #verbose          = 2 if config['train']['debug'] else 1,
+	#verbose default 1 show full progress
         callbacks        = callbacks, 
-        workers          = 4,
+#        workers          = 4,
         max_queue_size   = 8
     )
 

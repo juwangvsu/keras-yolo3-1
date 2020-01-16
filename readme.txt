@@ -3,7 +3,22 @@ yolo3_one_file_to_detect_them_all.py  ----------  use trained darknet weight fil
 train.py				-------   train yolov3 network, and generate .h5 weight file (keras format)
 yolo.py					-------   yolo3 network impl with keras
 voc.py					--------  process xml annotation file in voc format
+---------1/15/2020 code modify ------------------------
+clean up output:
+	yolo.py , 	comment tf.Print() lines
+	generator.py	comment resizing line
+			every 10 batch it resize to a different size, why?
+	train.py	ModelCheckpoint
+			fit_generator verbose=1 to show progress
+			each epoch will run 1713 step @batchsize=8, homepc
+				8 minutes 
+				8563 steps @batchsize=2, msi, 46 minutes!!
 
+how does the generator work? how many time it is called per epochs?
+	in keras-yolo-another, we can see the progress of image processed,
+	why not shown here?
+
+		
 ---------1/14-15/2020 -test training with voc2012 as README. -------------------
 http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 /media/student/voc2012
@@ -14,16 +29,21 @@ to start a retrain clean, make sure delete voc_train.pkl, which might contain ca
 
 train cmd:
 	python3 train.py -c zoo/config_voc.json
+		make sure rm voc_train.pkl
+		if change train.py code checkpoint
 results:
 	log_voc2012
 	voc2012_newtrain.h5
 
-perf:
+training performance:
 	msi: batch=2
 	tensorboard, loss drop by 25 in 2k, at 70k stall at 10
+		the 70k is probably step number, not epoch number
+		1/16, loss drop to 7.3486
 
 	continue train at homepc.
-	1/15	homepc batch=?
+	1/15	homepc batch=8, loss 25 in 40k
+		1/16 loss drop to 15.03
 eval:
 	to make evaluate work with voc2012, the val_image and val_ann folder are created
 	(1) generate the valid list of file from the train cmd, the modified train cmd will
@@ -34,14 +54,18 @@ eval:
 		results: media/student/voc2012/VOCdevkit/VOC2012/val_ann/2012_004300.xml and more 
 	(3) run
 		python3 evaluate.py -c zoo/config_voc.json
-	1/15	msi runs for some time ....
-	
+		voc2012_newtrain.h5:
+			mAP: 0.4640
+			mAP_voc2012_msi_rst.txt
+		voc.h5:
+			mAP: 0.8943
+			mAP_voch5_rst.txt	
 ----------test training with voc2007 -------------------
 train use config_voc_local.json
 if folder/path/filename error, need to delete cache file for next run
 	rm voc_train.pkl
 download backend.h5
-
+:
 bugs: gpu run out of memory, trying the same trick for tensorflow-yolo-3
 	change batch = 4 in config file
 	so far still out of memory
