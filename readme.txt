@@ -36,8 +36,11 @@ to start a retrain clean, make sure delete voc_train.pkl, which might contain ca
 
 train cmd:
 	python3 train.py -c zoo/config_voc.json
+		on homepc, batchsize=8
 		make sure rm voc_train.pkl
 		if change dataset , train.py code checkpoint
+		initial_epoch=20 continue from prev train, saved h5 file will
+			be numbered accordingly, change config_voc.json:nb_epochs			> initial_epoch otherwise it will skip train
 results:
 	log_voc2012
 	voc2012_newtrain.h5
@@ -51,6 +54,9 @@ training performance:
 	continue train at homepc.
 	1/15	homepc batch=8, loss 25 in 40k
 		1/16 loss drop to 15.03
+		1/17 loss drop to 11.8, mAP: 0.6318 ep092-loss11.635.h5
+		1/17 training another 100 epoch, ep1xx-loss....h5
+		1/18 100 epoch, mAP: 0.6172, ep2088-loss9.125.h5
 eval:
 	to make evaluate work with voc2012, the val_image and val_ann folder are created
 	(1) generate the valid list of file from the train cmd, the modified train cmd will

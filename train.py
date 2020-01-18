@@ -107,7 +107,7 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
         mode            = 'min', 
         period          = 1
     )
-    checkpoint3 = ModelCheckpoint('log_voc/ep{epoch:03d}-loss{loss:.3f}.h5', monitor='loss', save_weights_only=True, save_best_only=True, period=1)
+    checkpoint3 = ModelCheckpoint('log_voc/ep{epoch:03d}-loss{loss:.3f}.h5', monitor='loss', save_weights_only=True, save_best_only=True, period=4)
 	#checkpoint2 not working yet for some reason... 1/15/2020
 
     reduce_on_plateau = ReduceLROnPlateau(
@@ -281,6 +281,7 @@ def _main_(args):
         generator        = train_generator, 
         steps_per_epoch  = len(train_generator) * config['train']['train_times'], 
         epochs           = config['train']['nb_epochs'] + config['train']['warmup_epochs'], 
+        initial_epoch    = 25,
         #verbose          = 2 if config['train']['debug'] else 1,
 	#verbose default 1 show full progress
         callbacks        = callbacks, 
