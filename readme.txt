@@ -3,6 +3,16 @@ yolo3_one_file_to_detect_them_all.py  ----------  use trained darknet weight fil
 train.py				-------   train yolov3 network, and generate .h5 weight file (keras format)
 yolo.py					-------   yolo3 network impl with keras
 voc.py					--------  process xml annotation file in voc format
+
+data files:
+voc.h5				--- pretrained weights
+zoo/config_voc.json		--- used by train.py and predict.py as configuration file
+
+voc2012_newtrain.h5 		--- the weight file to be loaded to start/cont train and predict 
+				    link to log_voc/voc2012_newtrain.h5
+				    to test other h5 for train and predict, simply change this link
+
+log_voc/voc2012_newtrain.h5	--- link to log_voc/epxxxx.h5 a most recent h5
 ---------1/15/2020 code modify ------------------------
 clean up output:
 	yolo.py , 	comment tf.Print() lines
@@ -46,17 +56,26 @@ results:
 	voc2012_newtrain.h5
 
 training performance:
+	batchsize prop to loss value. msi batch=2 loss 6 equi to homepc
+		batchsize=8 loss 14, @rose batch=12
 	msi: batch=2
 	tensorboard, loss drop by 25 in 2k, at 70k stall at 10
 		the 70k is probably step number, not epoch number
 		1/16, loss drop to 7.3486
+			each epoch 40 min
 
+	continue train at rose.a
+		batch=12, loss start at 17, start from msi epoch 45.
+			each epoch 15 min
 	continue train at homepc.
-	1/15	homepc batch=8, loss 25 in 40k
+			each epoch 7 min
+		1/15 batch=8, loss 25 in 40k
 		1/16 loss drop to 15.03
 		1/17 loss drop to 11.8, mAP: 0.6318 ep092-loss11.635.h5
 		1/17 training another 100 epoch, ep1xx-loss....h5
 		1/18 100 epoch, mAP: 0.6172, ep2088-loss9.125.h5
+		1/18 100 epoch, mAP: 0.6139, ep400-loss8.517.h5
+
 eval:
 	to make evaluate work with voc2012, the val_image and val_ann folder are created
 	(1) generate the valid list of file from the train cmd, the modified train cmd will
@@ -67,11 +86,21 @@ eval:
 		results: media/student/voc2012/VOCdevkit/VOC2012/val_ann/2012_004300.xml and more 
 	(3) run
 		python3 evaluate.py -c zoo/config_voc.json
+		  eval file list frist come from cache .pkl file
+		  if no cache, then come from the ann_dir specified in config file's valid section
+		  train data set: VOC2012/JPEGImages/ 17125 files, 
+		  valid data set: VOC2012/val_image/  4700 files.
+	
+		ep402-loss8.373.h5:
+			against val data set  , mAP: 0.6072
+			against train data set, mAP: 0.89072
+
 		voc2012_newtrain.h5:
 			mAP: 0.4640
 			mAP_voc2012_msi_rst.txt
 		voc.h5:
-			mAP: 0.8943
+			against train data set, mAP: 0.8943
+			against valid data set, mAP: 0.894
 			mAP_voch5_rst.txt	
 ----------test training with voc2007 -------------------
 train use config_voc_local.json
@@ -83,12 +112,30 @@ bugs: gpu run out of memory, trying the same trick for tensorflow-yolo-3
 	change batch = 4 in config file
 	so far still out of memory
 
+----------checkpoint issues bugs ------------------
+when using checkpoint3, the saved .h5 not work with predict.py,
+	size a little smaller than voc.h5 (the stocked one)
+	comment off save_weight_only=True result in 700 mb h5 file, still not work
+	with predict.py
+go back to checkpoint (CustomizedCheckpoint) to see it if is right.
+
+	correct h5:
+	voc.h5				247378264	
+	voc2012/voc2012_newtrain.h5	247383344
+	ep402-loss8.373.h5		247383344 (start from ep400-loss8.517.h5, save model with checkpoint)
+	
+	incorrect h5 (saved from checkpoint3):	
+	ep400-loss8.517.h5		247273184 (homepc)
+
+
 --------------------------
 test with pretrained voc.h5 or yolov3.weights weights
 	download voc.h5
 	python3 predict.py -c zoo/config_voc.json -i dog2.jpg 
 	eog output/dog2.jpg 
 test with backend.h5 result in bad box
+	1/19/2020 new h5 file load fail with predict.py, anything to do with the use of
+	different checkpoint?
 
 test with yolo3.weights directly
 	python3 yolo3_one_file_to_detect_them_all.py -w yolov3.weights -i dog2.jpg

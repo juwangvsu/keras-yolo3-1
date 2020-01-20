@@ -35,7 +35,7 @@
     "valid": {
         "valid_image_folder":   "/media/student/voc2012/VOCdevkit/VOC2012/val_image/",
         "valid_annot_folder":   "/media/student/voc2012/VOCdevkit/VOC2012/val_ann/",
-        "cache_name":           "voc_train.pkl",
+        "cache_name":           "voc_valid.pkl",
 
         "valid_times":          1
     }

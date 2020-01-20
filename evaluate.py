@@ -30,7 +30,9 @@ def _main_(args):
 
     labels = labels.keys() if len(config['model']['labels']) == 0 else config['model']['labels']
     labels = sorted(labels)
-   
+    #print('valid_ints ', valid_ints)
+    print('valid_ints size ', len(valid_ints))
+ 
     valid_generator = BatchGenerator(
         instances           = valid_ints, 
         anchors             = config['model']['anchors'],   
@@ -51,6 +53,7 @@ def _main_(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = config['train']['gpus']
 
     infer_model = load_model(config['train']['saved_weights_name'])
+    print('validation folder: ', config['valid']['valid_image_folder'])
 
     # compute mAP for all the classes
     average_precisions = evaluate(infer_model, valid_generator)

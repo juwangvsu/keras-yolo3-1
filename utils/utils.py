@@ -41,9 +41,11 @@ def evaluate(model,
     all_detections     = [[None for i in range(generator.num_classes())] for j in range(generator.size())]
     all_annotations    = [[None for i in range(generator.num_classes())] for j in range(generator.size())]
     print(time.time())
+    print('total num of image eval: ', generator.size())
+
     for i in range(generator.size()):
-        print('time ', time.time())
-        print('evaluate image# ', i)
+        #print('time ', time.time())
+        #print('evaluate image# ', i)
         raw_image = [generator.load_image(i)]
 
         # make the boxes and the labels
