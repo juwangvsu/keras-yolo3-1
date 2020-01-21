@@ -109,7 +109,7 @@ def _main_(args):
             image_paths += [input_path]
 
         image_paths = [inp_file for inp_file in image_paths if (inp_file[-4:] in ['.jpg', '.png', 'JPEG'])]
-
+        print(infer_model.summary())
         # the main loop
         for image_path in image_paths:
             image = cv2.imread(image_path)
