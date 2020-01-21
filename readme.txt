@@ -16,6 +16,11 @@ voc2012_newtrain.h5 		--- the weight file to be loaded to start/cont train and p
 
 log_voc/voc2012_newtrain.h5	--- link to log_voc/epxxxx.h5 a most recent h5
 
+---------1/20/2020 diff among msi, homepc, rose ----------------
+	train.py:	initial_epoch = the next epoch number we want to save
+	zoo/config_voc.json:
+		batch_size=2/8/12
+		nb_epoch = the number of epochs to run
 
 ---------1/20/2020 test trained_weights_final.h5 from keras-yolo3-another/keras-yolo3----
 	initially fail to load_model(), fixed at that package.
@@ -93,6 +98,7 @@ training performance:
 		1/18 100 epoch, mAP: 0.6139, ep400-loss8.517.h5
 		1/20 lr=1e-4, start from ep402-loss8.373.h5,
 			ep404-loss15.096.h5
+			ep500-loss12.357.h5
 eval:
 	to make evaluate work with voc2012, the val_image and val_ann folder are created
 	(1) generate the valid list of file from the train cmd, the modified train cmd will
@@ -108,9 +114,12 @@ eval:
 		  train data set: VOC2012/JPEGImages/ 17125 files, 
 		  valid data set: VOC2012/val_image/  4700 files.
 	
-		ep402-loss8.373.h5:
+		ep402-loss8.373.h5: (homepc)
 			against val data set  , mAP: 0.6072
 			against train data set, mAP: 0.89072
+
+		ep500-loss12.357.h5: (homepc)
+			against val data set  , mAP: 0.8830
 
 		voc2012_newtrain.h5:
 			mAP: 0.4640
@@ -144,6 +153,7 @@ go back to checkpoint (CustomizedCheckpoint) to see it if is right.
 	incorrect h5 (saved from checkpoint3):	
 	ep400-loss8.517.h5		247273184 (homepc)
 
+resolved: use checkpoint
 
 -----------predict test detect on a image---------------
 test with local trained ep079-loss5.444.h5  (msi)
