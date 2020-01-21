@@ -99,7 +99,9 @@ training performance:
 		1/20 lr=1e-4, start from ep402-loss8.373.h5,
 			ep404-loss15.096.h5
 			ep500-loss12.357.h5
-eval:
+evaluate:	mAP
+	full set: ---- config_voc.json---"valid"---"cache_name":           "voc_train.pkl"
+:	valid set: --- config_voc.json---"valid"---"cache_name":           "voc_valid.pkl"
 	to make evaluate work with voc2012, the val_image and val_ann folder are created
 	(1) generate the valid list of file from the train cmd, the modified train cmd will
 		automatically generate valid_list.txt which contain the list of filename for valid.
