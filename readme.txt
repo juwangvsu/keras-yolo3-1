@@ -158,6 +158,8 @@ go back to checkpoint (CustomizedCheckpoint) to see it if is right.
 resolved: use checkpoint
 
 -----------predict test detect on a image---------------
+	python3 predict.py -c zoo/config_voc.json -i dog2.jpg 
+	ln -s target.h5 voc2012_newtrain.h5.ln
 test with local trained ep079-loss5.444.h5  (msi)
 	result box ok.
 
@@ -169,7 +171,6 @@ test with  trained_weights_final.h5 from keras-yolo3-another/keras-yolo3
 
 test with pretrained voc.h5 
 	download voc.h5
-	python3 predict.py -c zoo/config_voc.json -i dog2.jpg 
 	eog output/dog2.jpg 
 	result box good
 
